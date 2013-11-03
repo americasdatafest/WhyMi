@@ -22,8 +22,13 @@ import android.widget.Spinner;
 
 public class MainActivity extends Activity {
 
+	public static final String NOT_SELECTED = "NotSelected";
 	public static final String EMPTY_STRING = "";
 	private static final int ECONOMIC_POSITION = 0;
+	
+	//must match activity_main.xml definition in radio group!
+	private static final int GENDER_MALE_INDEX = 0;
+	private static final int GENDER_FEMALE_INDEX = 1;
 
 	private SurveyToSqlLiteHelper dbHelper;
 
@@ -49,11 +54,11 @@ public class MainActivity extends Activity {
 	public void saveAction(View view) {
 		String id = UUID.randomUUID().toString();
 		String surveyLocation = getEditTextAsString(R.id.surveyLocationText);
-		String gender = "M";
-		int age = 44;
-		String country = "Germany";
-		String primaryReason = "Economic";
-		String secondaryReason = "Yes";
+		String gender = getGenderRadioButtonValue();
+		String age = getEditTextAsString(R.id.ageText);
+		String country = getEditTextAsString(R.id.countryText);
+		String primaryReason = getSpinnerValue(R.id.primaryReasonSpinner);
+		String secondaryReason = getSpinnerValue(R.id.secondaryReasonSpinner);
 		Survey survey = new Survey(id, surveyLocation, gender, age, country,
 				primaryReason, secondaryReason);
 		dbHelper.addSurvey(survey);
@@ -97,6 +102,26 @@ public class MainActivity extends Activity {
 	private String getEditTextAsString(int editTextId) {
 		EditText editText = (EditText) findViewById(editTextId);
 		return editText.getText().toString();
+	}
+	
+	private String getGenderRadioButtonValue() {
+		String gender = NOT_SELECTED;
+		RadioGroup genderRadioGroup = (RadioGroup) findViewById(R.id.radioGender);
+		int checkedButtonId = genderRadioGroup.getCheckedRadioButtonId();
+		View radioButton = genderRadioGroup.findViewById(checkedButtonId);
+		int idx = genderRadioGroup.indexOfChild(radioButton);
+		if (idx == GENDER_MALE_INDEX) {
+			gender = "Male";
+		} else if (idx == GENDER_FEMALE_INDEX) {
+			gender = "Female";
+		}
+		return gender;
+	}
+
+	private String getSpinnerValue(int spinnerId) {
+		Spinner spinner = (Spinner) findViewById(spinnerId);
+		String spinnerValue = spinner.getSelectedItem().toString();
+		return spinnerValue;
 	}
 
 }

@@ -5,12 +5,12 @@ public class Survey {
 	private String id;
 	private String surveyLocation;
 	private String gender;
-	private int age;
+	private String age;
 	private String country;
 	private String primaryReason;
 	private String secondaryReason;
 	
-	public Survey(String id, String surveyLocation, String gender, int age,
+	public Survey(String id, String surveyLocation, String gender, String age,
 			String country, String primaryReason, String secondaryReason) {
 		super();
 		this.id = id;
@@ -40,10 +40,10 @@ public class Survey {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	public int getAge() {
+	public String getAge() {
 		return age;
 	}
-	public void setAge(int age) {
+	public void setAge(String age) {
 		this.age = age;
 	}
 	public String getCountry() {

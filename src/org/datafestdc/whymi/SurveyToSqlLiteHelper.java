@@ -79,7 +79,7 @@ public class SurveyToSqlLiteHelper extends SQLiteOpenHelper {
 
 	public void addSurvey(Survey survey) {
 		String[] columnValues = { survey.getId(), survey.getSurveyLocation(),
-				survey.getGender(), Integer.toString(survey.getAge()),
+				survey.getGender(), survey.getAge(),
 				survey.getCountry(), survey.getPrimaryReason(),
 				survey.getSecondaryReason() };
 		ContentValues values = new ContentValues();
