@@ -1,7 +1,18 @@
 package org.datafestdc.whymi;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.UUID;
+
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -13,14 +24,19 @@ public class MainActivity extends Activity {
 
 	public static final String EMPTY_STRING = "";
 	private static final int ECONOMIC_POSITION = 0;
-	
+
+	private SurveyToSqlLiteHelper dbHelper;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		dbHelper = new SurveyToSqlLiteHelper(this);
 		setContentView(R.layout.activity_main);
-		
-		createReasonSpinner(R.id.primaryReasonSpinner, R.array.primaryReasonList);
-		createReasonSpinner(R.id.secondaryReasonSpinner, R.array.secondaryReasonList);
+
+		createReasonSpinner(R.id.primaryReasonSpinner,
+				R.array.primaryReasonList);
+		createReasonSpinner(R.id.secondaryReasonSpinner,
+				R.array.secondaryReasonList);
 	}
 
 	@Override
@@ -30,40 +46,92 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
-	public void saveFields(View view) {
+	public void saveAction(View view) {
+		String id = UUID.randomUUID().toString();
+		String surveyLocation = getEditTextAsString(R.id.surveyLocationText);
+		String gender = "M";
+		int age = 44;
+		String country = "Germany";
+		String primaryReason = "Economic";
+		String secondaryReason = "Yes";
+		Survey survey = new Survey(id, surveyLocation, gender, age, country,
+				primaryReason, secondaryReason);
+		
+		String filename = "mysecondfile";
+	    String outputString = "Hello world!";
+	    File myDir = getFilesDir();
 
+	    try {
+	        File secondFile = new File(myDir + "/text/", filename);
+	        if (secondFile.getParentFile().mkdirs()) {
+	            secondFile.createNewFile();
+	            FileOutputStream fos = new FileOutputStream(secondFile);
+
+	            fos.write(outputString.getBytes());
+	            fos.flush();
+	            fos.close();
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    try {
+	        File secondInputFile = new File(myDir + "/text/", filename);
+	        InputStream secondInputStream = new BufferedInputStream(new FileInputStream(secondInputFile));
+	        BufferedReader r = new BufferedReader(new InputStreamReader(secondInputStream));
+	        StringBuilder total = new StringBuilder();
+	        String line;
+	        while ((line = r.readLine()) != null) {
+	            total.append(line);
+	        }
+	        r.close();
+	        secondInputStream.close();
+	        Log.d("File", "File contents: " + total);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+		
+		dbHelper.addSurvey(survey);
 	}
 
 	public void resetAction(View view) {
 		resetResettableViews();
 	}
-	
+
 	private void resetResettableViews() {
 		RadioGroup genderRadioGroup = (RadioGroup) findViewById(R.id.radioGender);
 		genderRadioGroup.clearCheck();
-		
-		int[] resettableEditTextIds = {R.id.ageText, R.id.countryText};
+
+		int[] resettableEditTextIds = { R.id.ageText, R.id.countryText };
 		for (int textId : resettableEditTextIds) {
 			EditText editText = (EditText) findViewById(textId);
 			editText.setText(EMPTY_STRING);
 		}
-		
-		int[] spinnerIds = {R.id.primaryReasonSpinner, R.id.secondaryReasonSpinner};
+
+		int[] spinnerIds = { R.id.primaryReasonSpinner,
+				R.id.secondaryReasonSpinner };
 		for (int spinnerId : spinnerIds) {
 			Spinner spinner = (Spinner) findViewById(spinnerId);
 			boolean animate = true;
 			spinner.setSelection(ECONOMIC_POSITION, animate);
 		}
 	}
-	
+
 	private void createReasonSpinner(int spinnerId, int reasonArrayId) {
 		Spinner spinner = (Spinner) findViewById(spinnerId);
-		// Create an ArrayAdapter using the string array and a default spinner layout
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-				reasonArrayId, android.R.layout.simple_spinner_item);
+		// Create an ArrayAdapter using the string array and a default spinner
+		// layout
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+				this, reasonArrayId, android.R.layout.simple_spinner_item);
 		// Specify the layout to use when the list of choices appears
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		// Apply the adapter to the spinner
 		spinner.setAdapter(adapter);
 	}
+
+	private String getEditTextAsString(int editTextId) {
+		EditText editText = (EditText) findViewById(editTextId);
+		return editText.getText().toString();
+	}
+
 }
