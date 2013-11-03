@@ -16,7 +16,7 @@
     <string name="reset">Reset</string>
 
     <string-array name="primaryReasonList">
-        <item></item>
+        <item>Not selected</item>
         <item>Economic</item>
         <item>Family reunification</item>
         <item>Violence/Organized Crime</item>
@@ -25,6 +25,7 @@
         <item>Other</item>
     </string-array>
     <string-array name="secondaryReasonList">
+        <item>Not selected</item>
         <item>Economic</item>
         <item>Family reunification</item>
         <item>Violence/Organized Crime</item>

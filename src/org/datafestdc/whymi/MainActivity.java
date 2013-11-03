@@ -1,18 +1,11 @@
 package org.datafestdc.whymi;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.UUID;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,6 +15,8 @@ import android.widget.Spinner;
 
 public class MainActivity extends Activity {
 
+	private static final String FEMALE = "Female";
+	private static final String MALE = "Male";
 	public static final String NOT_SELECTED = "NotSelected";
 	public static final String EMPTY_STRING = "";
 	private static final int ECONOMIC_POSITION = 0;
@@ -62,6 +57,22 @@ public class MainActivity extends Activity {
 		Survey survey = new Survey(id, surveyLocation, gender, age, country,
 				primaryReason, secondaryReason);
 		dbHelper.addSurvey(survey);
+		resetResettableViews();
+		showSuccessDialog();
+	}
+
+	private void showSuccessDialog() {
+		final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+		alertDialog.setTitle("Survey Result Success");
+		alertDialog.setMessage("Survey results successfully saved...");
+		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+		   public void onClick(DialogInterface dialog, int which) {
+		      alertDialog.dismiss();
+		   }
+		});
+		// Set the Icon for the Dialog
+		alertDialog.setIcon(R.drawable.ic_launcher);
+		alertDialog.show();
 	}
 
 	public void resetAction(View view) {
@@ -111,9 +122,9 @@ public class MainActivity extends Activity {
 		View radioButton = genderRadioGroup.findViewById(checkedButtonId);
 		int idx = genderRadioGroup.indexOfChild(radioButton);
 		if (idx == GENDER_MALE_INDEX) {
-			gender = "Male";
+			gender = MALE;
 		} else if (idx == GENDER_FEMALE_INDEX) {
-			gender = "Female";
+			gender = FEMALE;
 		}
 		return gender;
 	}
